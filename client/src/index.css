@@ -16,9 +16,9 @@
   --primary: hsl(48, 100%, 67%);
   --primary-foreground: hsl(24, 9.8%, 10%);
   --primary-light: hsl(48, 100%, 85%);
-  --secondary: hsl(94, 48%, 78%);
+  --secondary: hsl(280, 48%, 78%);
   --secondary-foreground: hsl(24, 9.8%, 10%);
-  --secondary-light: hsl(94, 48%, 87%);
+  --secondary-light: hsl(280, 48%, 87%);
   --accent: hsl(14, 100%, 70%);
   --accent-foreground: hsl(60, 9.1%, 97.8%);
   --destructive: hsl(0, 84.2%, 60.2%);
@@ -60,7 +60,7 @@
   }
 
   body {
-    @apply font-sans antialiased bg-gradient-to-br from-[hsl(48,100%,85%)] to-[hsl(94,48%,87%)] text-foreground;
+    @apply font-sans antialiased bg-gradient-to-br from-[hsl(48,100%,85%)] to-[hsl(280,48%,87%)] text-foreground;
     min-height: 100vh;
     font-family: 'Inter', sans-serif;
   }

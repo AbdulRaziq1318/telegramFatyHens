@@ -6,7 +6,7 @@ const INITIAL_STATE: GameState = {
   food: 3,
   boosterActive: false,
   boosterTimeLeft: 0,
-  nextEggTime: 2000,
+  nextEggTime: Date.now() + 2000,
   lastUpdate: Date.now(),
   totalEggs: 0,
   daysActive: 1,
@@ -27,7 +27,7 @@ export const useGameState = () => {
         const timeDiff = now - parsed.lastUpdate;
         
         if (parsed.food > 0 && timeDiff > 0) {
-          const layRate = parsed.boosterActive ? 666 : 2000;
+          const layRate = parsed.boosterActive ? 666 : 2000; // 3x faster with booster (0.66s vs 2s)
           const eggsEarned = Math.floor(timeDiff / layRate);
           const foodConsumed = Math.floor(timeDiff / (60 * 60 * 1000)); // 1 food per hour
           
@@ -95,7 +95,7 @@ export const useGameState = () => {
     }));
   }, [updateGameState]);
 
-  const tapHen = useCallback(() => {
+  const tapEgg = useCallback(() => {
     if (gameState.food <= 0) {
       const eggAmount = gameState.boosterActive ? 0.3 : 0.1;
       addEggs(eggAmount);
@@ -106,13 +106,17 @@ export const useGameState = () => {
   useEffect(() => {
     if (gameState.food <= 0) return;
 
-    const layRate = gameState.boosterActive ? 666 : 2000;
+    const layRate = gameState.boosterActive ? 666 : 2000; // 3x faster with booster
     const interval = setInterval(() => {
       addEggs(1);
+      updateGameState(prev => ({
+        ...prev,
+        nextEggTime: Date.now() + layRate,
+      }));
     }, layRate);
 
     return () => clearInterval(interval);
-  }, [gameState.food, gameState.boosterActive, addEggs]);
+  }, [gameState.food, gameState.boosterActive, addEggs, updateGameState]);
 
   // Booster countdown effect
   useEffect(() => {
@@ -152,6 +156,6 @@ export const useGameState = () => {
     addFood,
     activateBooster,
     completeTask,
-    tapHen,
+    tapEgg,
   };
 };

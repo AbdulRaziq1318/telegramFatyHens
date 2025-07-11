@@ -1,0 +1,14 @@
+<svg width="160" height="180" viewBox="0 0 160 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="eggGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#FFFBDC;stop-opacity:1" />
+<stop offset="50%" style="stop-color:#FFF7CD;stop-opacity:1" />
+<stop offset="100%" style="stop-color:#FAE794;stop-opacity:1" />
+</linearGradient>
+<filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+<feDropShadow dx="4" dy="8" stdDeviation="8" flood-opacity="0.3"/>
+</filter>
+</defs>
+<ellipse cx="80" cy="120" rx="65" ry="80" fill="url(#eggGradient)" filter="url(#shadow)" stroke="#F1DA5E" stroke-width="2"/>
+<ellipse cx="65" cy="80" rx="15" ry="20" fill="#FFFFFF" opacity="0.7"/>
+</svg>

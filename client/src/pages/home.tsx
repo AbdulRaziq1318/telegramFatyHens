@@ -1,15 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { HenCharacter } from '@/components/hen-character';
+import { EggCharacter } from '@/components/egg-character';
 import { AdModal } from '@/components/ad-modal';
 import { useGameState } from '@/hooks/use-game-state';
 import { Zap, Play, Share2 } from 'lucide-react';
 
 export const HomePage = () => {
-  const { gameState, addFood, activateBooster, tapHen } = useGameState();
+  const { gameState, addFood, activateBooster, tapEgg } = useGameState();
   const [showAdModal, setShowAdModal] = useState(false);
   const [adType, setAdType] = useState<'food' | 'booster'>('food');
+  const [currentTime, setCurrentTime] = useState(Date.now());
+
+  // Update timer every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleBoosterClick = () => {
     if (!gameState.boosterActive) {
@@ -37,12 +46,19 @@ export const HomePage = () => {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  const getNextEggCountdown = () => {
+    if (gameState.food <= 0) return "00:00";
+    const timeLeft = Math.max(0, gameState.nextEggTime - currentTime);
+    const seconds = Math.ceil(timeLeft / 1000);
+    return `00:${seconds.toString().padStart(2, '0')}`;
+  };
+
   const isFeeding = gameState.food > 0;
 
   return (
     <div className="pb-20">
       {/* Header Stats */}
-      <div className="bg-gradient-to-r from-[hsl(48,100%,67%)] to-[hsl(94,48%,78%)] p-4 shadow-lg">
+      <div className="bg-gradient-to-r from-[hsl(48,100%,67%)] to-[hsl(280,48%,78%)] p-4 shadow-lg">
         <div className="flex justify-between items-center">
           <div className="bg-white rounded-full px-4 py-2 shadow-md">
             <div className="flex items-center space-x-2">
@@ -88,8 +104,8 @@ export const HomePage = () => {
           </div>
         )}
 
-        {/* Hen Container */}
-        <Card className="bg-gradient-to-b from-[hsl(94,48%,87%)] to-[hsl(94,48%,78%)] rounded-3xl shadow-xl relative overflow-hidden">
+        {/* Egg Container */}
+        <Card className="bg-gradient-to-b from-[hsl(280,48%,87%)] to-[hsl(280,48%,78%)] rounded-3xl shadow-xl relative overflow-hidden">
           <CardContent className="p-8 text-center relative">
             {/* Background Decoration */}
             <div className="absolute inset-0 opacity-20">
@@ -98,25 +114,34 @@ export const HomePage = () => {
               <div className="absolute bottom-6 left-6 w-5 h-5 bg-[hsl(207,90%,61%)] rounded-full animate-pulse-fast"></div>
             </div>
 
-            {/* Hen Character */}
+            {/* Egg Character */}
             <div className="relative z-10">
-              <HenCharacter isFeeding={isFeeding} onTap={tapHen} />
+              <EggCharacter 
+                isFeeding={isFeeding} 
+                onTap={tapEgg} 
+                boosterActive={gameState.boosterActive}
+              />
             </div>
 
             {/* Status Text */}
             <div className="space-y-2 mt-4">
-              <h2 className="text-2xl font-bold text-[hsl(210,10%,23%)]">Your Fat Hen</h2>
+              <h2 className="text-2xl font-bold text-[hsl(210,10%,23%)]">Your Magic Egg</h2>
               <div>
                 {isFeeding ? (
                   <div className="bg-[hsl(122,39%,49%)] text-white rounded-full px-4 py-2 inline-block">
-                    <span className="text-sm">Next egg in 00:02</span>
+                    <span className="text-sm">Laying egg in: {getNextEggCountdown()}</span>
                   </div>
                 ) : (
                   <div className="bg-[hsl(36,100%,60%)] text-white rounded-full px-4 py-2 inline-block">
-                    <span className="text-sm">Hen is hungry! Tap to lay eggs 🐔</span>
+                    <span className="text-sm">Egg is cold. Feed it to start laying!</span>
                   </div>
                 )}
               </div>
+              {!isFeeding && (
+                <div className="text-gray-500 text-sm">
+                  Tap to warm the egg! 🥚
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -133,7 +158,7 @@ export const HomePage = () => {
             </div>
             <div className="bg-gray-200 rounded-full h-3 mb-2">
               <div 
-                className="bg-gradient-to-r from-[hsl(122,39%,49%)] to-[hsl(94,48%,78%)] h-3 rounded-full transition-all duration-500" 
+                className="bg-gradient-to-r from-[hsl(122,39%,49%)] to-[hsl(280,48%,78%)] h-3 rounded-full transition-all duration-500" 
                 style={{ width: `${Math.min(100, (gameState.eggs % 100))}%` }}
               />
             </div>
