@@ -1,0 +1,85 @@
+Create a Telegram MiniApp using React + TailwindCSS called “Fat Hen – Feed & Earn”.
+
+🎮 GAME IDEA:
+Users collect eggs by keeping a fat hen fed. Hen lays eggs automatically if food is available, or users can tap manually. Boosters make the hen lay eggs 3x faster. All rewards come from watching ads or referrals. Eggs will later be convertible to real coins.
+
+---
+
+🧱 PAGES:
+
+1. 🏠 HOME PAGE (Main Hen Page):
+- Show a big cartoon fat hen in center
+- Show:
+  - 🥚 Eggs Collected
+  - 🥣 Food Packets Left
+  - 🕒 Countdown: "Next egg in 00:01"
+- If user has food:
+  - Hen lays 1 egg every 2 sec (or every 0.66 sec with booster)
+  - Hen shows **active laying animation** (feathers moving, beak open)
+- If no food:
+  - Show message: "Hen is hungry! Tap to lay eggs"
+  - Tapping hen = +0.1 egg (or 0.3 egg if booster active)
+  - Hen does **quick peck animation** on tap
+
+✅ Booster:
+- Booster icon/button on top-right of hen (label: "⚡ Booster")
+- Tapping it shows simulated 15s ad
+- After ad, booster activates → laying speed becomes 3x faster for 1 hour
+- Show countdown timer when booster is active
+- Disable booster button while active
+
+2. 🍽️ TASKS PAGE:
+- Show 5 daily tasks (dummy): visit site, join group, watch ad
+- Each task = +1 food packet
+- Watching ad = +1 food
+- Mark completed tasks ✅
+
+3. 👥 REFERRAL PAGE:
+- Show referral link: `?ref=username`
+- Each invite = +1 food packet
+- Show total invites and referred usernames (dummy)
+
+4. 🏆 LEADERBOARD PAGE:
+- Weekly top 10 users with most eggs
+- Show rank, username, egg count
+- Highlight 🥇🥈🥉 users
+
+5. 👤 PROFILE PAGE:
+- Show:
+  - Username (@telegramname)
+  - Total Eggs Collected
+  - 🔗 Connect TON Wallet (simulate)
+  - Motivational Text:
+    “🔓 Convert your eggs to coins at launch. The countdown has already begun! ⏳”
+
+---
+
+🎨 UI / UX:
+
+- Fun cartoon theme with pastel yellow/green colors
+- Hen image animated: idle vs laying vs peck
+- TailwindCSS layout with rounded cards and soft shadows
+- Mobile-first responsive (Telegram MiniApp = 320px width)
+- Fixed bottom navbar: Home 🏠, Tasks 📋, Referrals 👥, Leaderboard 🏆, Profile 👤
+- Booster button on Home hen area (small floating top-right or under hen)
+
+---
+
+🧠 GAME LOGIC:
+
+- If food > 0:
+  - Auto-lay every 2 sec (30 eggs/hour)
+  - If booster active: auto-lay every 0.66 sec (~90 eggs/hour)
+  - Food -1 per hour
+- If no food:
+  - Tap = +0.1 egg (or +0.3 with booster)
+- Booster lasts 1 hour per ad view
+- Booster cooldown: only 1 active at a time
+- Eggs, food, boosterTime stored in `localStorage` (simulate backend for now)
+
+---
+
+✅ Notes:
+- Use simple ad simulation with 15s timers
+- All animations = CSS or GIFs or Lottie (fake now)
+- Use dummy data for leaderboard & referrals
