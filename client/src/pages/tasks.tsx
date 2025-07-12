@@ -19,7 +19,7 @@ export const TasksPage = () => {
 
   useEffect(() => {
     getTasks().then((data) => {
-      const completedTasks = gameState.completedTasks || [];
+      const completedTasks = gameState?.completedTasks || [];
       const updated = data.map((task: Task) => ({
         ...task,
         completed: completedTasks.includes(task.id),
@@ -47,7 +47,9 @@ export const TasksPage = () => {
       {tasks.map((task) => (
         <div
           key={task.id}
-          className={`mb-4 p-4 rounded-lg shadow-md flex justify-between items-center ${task.completed ? 'bg-gray-300' : 'bg-white'}`}
+          className={`mb-4 p-4 rounded-lg shadow-md flex justify-between items-center ${
+            task.completed ? 'bg-gray-300' : 'bg-white'
+          }`}
         >
           <div className="flex gap-2 items-center">
             {getTaskIcon(task.icon)}
