@@ -1,11 +1,42 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import TelegramBot from "node-telegram-bot-api";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// 🟡 Telegram Bot Setup
+const BOT_TOKEN = process.env.BOT_TOKEN!;
+const WEB_APP_URL = "https://telegramfatyhens.onrender.com";
+
+if (!BOT_TOKEN) {
+  console.error("❌ BOT_TOKEN is not defined in environment variables");
+  process.exit(1);
+}
+
+const bot = new TelegramBot(BOT_TOKEN, { polling: true });
+bot.onText(/\/start/, (msg) => {
+  const chatId = msg.chat.id;
+
+  bot.sendMessage(chatId, "👋 Welcome to FatHen!\nClick below to collect eggs 🥚", {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: "🚀 Launch FatHen",
+            web_app: { url: WEB_APP_URL },
+          },
+        ],
+      ],
+    },
+  });
+});
+
+console.log("✅ Telegram bot is running...");
+
+// 🟢 Logger
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -36,6 +67,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// 🟢 Launch server
 (async () => {
   const server = await registerRoutes(app);
 
@@ -55,8 +87,7 @@ app.use((req, res, next) => {
 
   const port = parseInt(process.env.PORT || '5000', 10);
 
-  // 🛠 FIXED: Remove "0.0.0.0" — not supported on Windows. Use localhost-compatible version:
   server.listen(port, () => {
-    log(`✅ Server is running on http://localhost:${port}`);
+    log(`✅ Server + Bot running on http://localhost:${port}`);
   });
 })();
