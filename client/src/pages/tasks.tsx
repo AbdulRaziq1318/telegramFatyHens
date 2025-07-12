@@ -14,26 +14,27 @@ export const TasksPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const sheetTasks = await getTasks();
-      const withStatus = sheetTasks.map(task => ({
+    getTasks().then((data) => {
+      const updated = data.map((task: any, index: number) => ({
         ...task,
-        completed: gameState.completedTasks.includes(task.id),
+        id: `task-${index}`,
+        reward: parseInt(task.reward),
+        completed: gameState.completedTasks.includes(`task-${index}`),
       }));
-      setTasks(withStatus);
-    };
-    fetchData();
+      setTasks(updated);
+    });
   }, [gameState.completedTasks]);
 
-  const completedCount = tasks.filter(task => task.completed).length;
+  const completedCount = tasks.filter((task) => task.completed).length;
 
   const handleTaskAction = (task: Task) => {
     if (task.completed) return;
 
-    if (task.action === 'watch') {
+    if (task.icon === 'play') {
       setCurrentTaskId(task.id);
       setShowAdModal(true);
     } else {
+      if (task.link) window.open(task.link, '_blank');
       setTimeout(() => {
         completeTask(task.id);
         addFood(task.reward);
@@ -60,36 +61,38 @@ export const TasksPage = () => {
     }
   };
 
-  const getColorClass = (color: string) => {
-    switch (color) {
-      case 'success': return 'border-[hsl(122,39%,49%)] bg-[hsl(122,39%,49%)]';
-      case 'blue': return 'border-[hsl(207,90%,61%)] bg-[hsl(207,90%,61%)]';
-      case 'warning': return 'border-[hsl(36,100%,60%)] bg-[hsl(36,100%,60%)]';
-      case 'accent': return 'border-[hsl(14,100%,70%)] bg-[hsl(14,100%,70%)]';
-      case 'secondary': return 'border-[hsl(94,48%,78%)] bg-[hsl(94,48%,78%)]';
+  const getColorClass = (icon: string) => {
+    switch (icon) {
+      case 'link': return 'border-[hsl(122,39%,49%)] bg-[hsl(122,39%,49%)]';
+      case 'telegram': return 'border-[hsl(207,90%,61%)] bg-[hsl(207,90%,61%)]';
+      case 'play': return 'border-[hsl(36,100%,60%)] bg-[hsl(36,100%,60%)]';
+      case 'heart': return 'border-[hsl(14,100%,70%)] bg-[hsl(14,100%,70%)]';
+      case 'share': return 'border-[hsl(94,48%,78%)] bg-[hsl(94,48%,78%)]';
       default: return 'border-gray-300 bg-gray-300';
     }
   };
 
   return (
     <div className="p-6 pb-20">
+      {/* Header */}
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold text-[hsl(210,10%,23%)] mb-2">Daily Tasks</h1>
         <p className="text-gray-600">Complete tasks to earn food packets! 🥣</p>
       </div>
 
+      {/* Tasks List */}
       <div className="space-y-4">
         {tasks.map((task) => (
-          <Card key={task.id} className={`shadow-lg border-l-4 ${getColorClass(task.color || '')}`}>
+          <Card key={task.id} className={`shadow-lg border-l-4 ${getColorClass(task.icon)}`}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className={`text-white rounded-full w-8 h-8 flex items-center justify-center ${getColorClass(task.color || '')}`}>
-                    {task.completed ? <Check className="w-4 h-4" /> : getTaskIcon(task.icon || '')}
+                  <div className={`text-white rounded-full w-8 h-8 flex items-center justify-center ${getColorClass(task.icon)}`}>
+                    {task.completed ? <Check className="w-4 h-4" /> : getTaskIcon(task.icon)}
                   </div>
                   <div>
                     <h3 className="font-semibold text-[hsl(210,10%,23%)]">{task.title}</h3>
-                    <p className="text-sm text-gray-500">{task.description || 'Complete this task'}</p>
+                    <p className="text-sm text-gray-500">{task.description}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -98,14 +101,13 @@ export const TasksPage = () => {
                   ) : (
                     <Button
                       onClick={() => handleTaskAction(task)}
-                      className={`text-white rounded-full px-4 py-2 text-sm font-semibold ${getColorClass(task.color || '')}`}
+                      className={`text-white rounded-full px-4 py-2 text-sm font-semibold ${getColorClass(task.icon)}`}
                     >
-                      {task.action === 'watch' ? 'Watch' : 
-                       task.action === 'join' ? 'Join' :
-                       task.action === 'follow' ? 'Follow' :
-                       task.action === 'share' ? 'Share' : 
-                       task.action === 'visit' ? 'Visit' : 
-                       'Complete'}
+                      {task.icon === 'play' ? 'Watch' :
+                        task.icon === 'telegram' ? 'Join' :
+                        task.icon === 'heart' ? 'Follow' :
+                        task.icon === 'share' ? 'Share' :
+                        'Complete'}
                     </Button>
                   )}
                   <p className="text-xs text-gray-500 mt-1">+{task.reward} 🥣</p>
@@ -116,14 +118,15 @@ export const TasksPage = () => {
         ))}
       </div>
 
+      {/* Daily Progress */}
       <Card className="bg-gradient-to-r from-[hsl(48,100%,67%)] to-[hsl(94,48%,78%)] mt-6">
         <CardContent className="p-6 text-center">
           <h3 className="font-bold text-[hsl(210,10%,23%)] text-xl mb-2">Daily Progress</h3>
           <div className="text-3xl font-bold text-[hsl(210,10%,23%)] mb-2">{completedCount}/{tasks.length}</div>
           <p className="text-[hsl(210,10%,23%)] opacity-80">Tasks Completed Today</p>
           <div className="bg-white bg-opacity-30 rounded-full h-2 mt-4">
-            <div 
-              className="bg-white h-2 rounded-full transition-all duration-500" 
+            <div
+              className="bg-white h-2 rounded-full transition-all duration-500"
               style={{ width: `${(completedCount / tasks.length) * 100}%` }}
             />
           </div>
