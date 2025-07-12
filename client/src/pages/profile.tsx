@@ -113,7 +113,7 @@ export const ProfilePage = () => {
             Convert your eggs to coins at launch. The countdown has already begun! ⏳
           </p>
           <div className="bg-white bg-opacity-20 rounded-xl p-3">
-            <p className="text-xs">Estimated Launch: Q2 2024</p>
+            <p className="text-xs">Estimated Launch: Q2 2026</p>
           </div>
         </CardContent>
       </Card>

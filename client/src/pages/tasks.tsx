@@ -19,12 +19,15 @@ export const TasksPage = () => {
 
   useEffect(() => {
     getTasks().then((data) => {
+      console.log('TASKS FROM FIRESTORE:', data); // Debugging
       const completedTasks = gameState?.completedTasks || [];
       const updated = data.map((task: Task) => ({
         ...task,
         completed: completedTasks.includes(task.id),
       }));
       setTasks(updated);
+    }).catch((error) => {
+      console.error('Failed to load tasks:', error);
     });
   }, []);
 
@@ -43,6 +46,10 @@ export const TasksPage = () => {
     <div className="p-4">
       <h1 className="text-2xl font-bold text-center mb-2">Daily Tasks</h1>
       <p className="text-center mb-4">Complete tasks to earn food packets! 🥣</p>
+
+      {tasks.length === 0 && (
+        <div className="text-center text-gray-500">No tasks available.</div>
+      )}
 
       {tasks.map((task) => (
         <div
