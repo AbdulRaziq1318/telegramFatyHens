@@ -3,7 +3,8 @@ import { collection, getDocs, getFirestore, query, orderBy } from 'firebase/fire
 import { Card, CardContent } from '@/components/ui/card';
 import { useGameState } from '@/hooks/use-game-state';
 import { Trophy } from 'lucide-react';
-import { app } from '@/lib/firebaseConfig'; // Firebase app from config
+import { app } from '@/lib/firebaseConfig'; // ✅ Correct relative path
+
 
 type LeaderboardEntry = {
   id: string;
