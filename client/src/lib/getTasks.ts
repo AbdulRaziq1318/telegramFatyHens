@@ -1,25 +1,23 @@
+// src/lib/getTasks.ts
 export async function getTasks() {
   const res = await fetch(
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vSODduSlYFBRMB2YcuKYvMhg8wir38V_p6U-LOshlC-JPexB_osbZywhfZaM-rg7xjeKjwKfjymBqTa/pub?output=csv"
   );
   const text = await res.text();
-  const lines = text.trim().split("\n");
-  const headers = lines[0].split(",");
 
-  return lines.slice(1).map((line, index) => {
-    const values = line.split(",");
-    const task: Record<string, string> = {};
-    headers.forEach((h, i) => {
-      task[h.trim()] = values[i]?.trim() ?? "";
-    });
+  const rows = text.split("\n").slice(1); // skip header
+  const tasks = rows.map((row, index) => {
+    const [title, description, link, rewardStr, icon] = row.split(",");
 
     return {
       id: `task-${index}`,
-      title: task["title"],
-      description: task["description"],
-      reward: parseInt(task["reward"]),
-      link: task["link"],
-      icon: task["icon"], // use icon value like telegram, link, etc.
+      title: title?.trim(),
+      description: description?.trim(),
+      link: link?.trim(),
+      reward: Number(rewardStr?.trim()) || 0,
+      icon: icon?.trim(),
     };
   });
+
+  return tasks.filter((task) => task.title); // remove empty rows
 }
